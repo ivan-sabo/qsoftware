@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Author</h1>
+
+    <label>Id: </label> {{ author.id }} <br>
+    <label>First name: </label> {{ author.firstName }} <br>
+    <label>Last name: </label>{{ author.lastName }} <br>
+    <label>Birthday: </label>{{ author.birthday }} <br>
+    <label>Gender: </label>{{ author.gender }} <br>
+    <label>Place of firth: </label>{{ author.placeOfBirth }} <br>
+    <label>Action: </label> <a href="{{ path('author_delete', {id: author.id}) }}">Delete author</a> <br><br>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Release date</th>
+            <th>Updated at</th>
+            <th>ISBN</th>
+            <th>Format</th>
+            <th>Number of pages</th>
+            <th>Action</th>
+        </thead>
+        <tbody>
+        {% for book in author.books %}
+            <tr>
+                <td>{{ book.id }}</td>
+                <td>{{ book.title }}</td>
+                <td>{{ book.releaseDate }}</td>
+                <td>{{ book.updatedAt }}</td>
+                <td>{{ book.isbn }}</td>
+                <td>{{ book.format }}</td>
+                <td>{{ book.numberOfPages }}</td>
+                <td><a href="{{ path('book_delete', {id: book.id}) }}">Delete book</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

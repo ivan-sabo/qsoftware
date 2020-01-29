@@ -9,6 +9,8 @@
         <div>
             {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                 <p>Email: {{ app.user.email }}</p>
+                <a href="{{ path('user_logout') }}">Logout</a>
+                <a href="{{ path('authors') }}">Authors</a>
             {% else %}
                 <a href="{{ path('user_login') }}">Login</a>
             {% endif %}

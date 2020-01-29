@@ -75,10 +75,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
             return true;
         }
 
-        if (!empty($request->getSession()->get('token'))) {
-            return true;
-        }
-
         return false;
     }
 
@@ -116,12 +112,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
             return $credentials;
         }
 
-        if (!empty($request->getSession()->get('token'))) {
-            return [
-                'token' => $request->getSession()->get('token')
-            ];
-        }
-
         return null;
     }
 
@@ -148,10 +138,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     {
         if (!empty($credentials['email']) && !empty($credentials['password'])) {
             return $this->userService->getUser($credentials['email'], $credentials['password']);
-        }
-
-        if (!empty($credentials['token'])) {
-            return $this->userService->getUserByToken($credentials['token']);
         }
 
         return null;

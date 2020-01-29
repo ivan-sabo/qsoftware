@@ -9,6 +9,10 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class UserService
@@ -33,12 +37,10 @@ class UserService
      * @param $email
      * @param $password
      * @return User|object|null
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
      */
     public function getUser($email, $password)
     {
@@ -48,26 +50,7 @@ class UserService
             return null;
         }
 
-        $user = $this->createAndStoreFromResponse($userDataResponse);
-
-        return $user;
-    }
-
-    /**
-     * @param $token
-     * @return User
-     */
-    public function getUserByToken($token)
-    {
-        /**
-         * @var UserRepository $userRepo
-         */
-        $userRepo = $this->em->getRepository(User::class);
-
-        /**
-         * @var User $user
-         */
-        $user = $userRepo->findOneBy(['token' => $token]);
+        $user = $this->createOrUpdateFromResponse($userDataResponse);
 
         return $user;
     }
@@ -75,18 +58,32 @@ class UserService
     /**
      * @param ResponseInterface $response
      * @return User
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws RedirectionExceptionInterface
      */
-    public function createAndStoreFromResponse(ResponseInterface $response)
+    private function createOrUpdateFromResponse(ResponseInterface $response)
     {
-        $user = new User();
-
         $responseArray = json_decode($response->getContent(), true);
+
+        /**
+         * @var UserRepository $userRepo
+         */
+        $userRepo = $this->em->getRepository(User::class);
+
+        /**
+         * @var User|null $user
+         */
+        $user = $userRepo->findOneBy(['email' => $responseArray['user']['email']]);
+
+        if (!empty($user)) {
+            $user->setTokenKey($responseArray['token_key']);
+
+            $this->em->flush();
+
+            return $user;
+        }
 
         $user->setActive(true);
         $user->setTokenKey($responseArray['token_key']);
