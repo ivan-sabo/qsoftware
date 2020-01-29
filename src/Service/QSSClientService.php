@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class QSSClientService
 {
-    public function getToken($email, $password)
+    public function getUserData($email, $password)
     {
         $httpClient = HttpClient::createForBaseUri('https://symfony-skeleton.q-tests.com', ['http_version' => '2.0']);
 
@@ -35,6 +35,6 @@ class QSSClientService
             return $response;
         }
 
-        return $response;
+        return null;
     }
 }
