@@ -6,6 +6,7 @@ namespace App\Service;
 use App\Entity\Author;
 use App\Entity\Book;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
@@ -17,7 +18,7 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
  */
 class AuthorService
 {
-    const AUTHOR_URI = '/api/authors';
+    const AUTHOR_URL = '/api/authors';
 
     /**
      * @var QSSClientService
@@ -38,7 +39,7 @@ class AuthorService
      */
     public function getAuthors()
     {
-        $response = $this->clientService->sendGetRequest(self::AUTHOR_URI);
+        $response = $this->clientService->sendGetRequest(self::AUTHOR_URL);
 
         $authorsRaw = json_decode($response->getContent(), true);
         $authorsCollection = new ArrayCollection();
@@ -68,7 +69,7 @@ class AuthorService
      */
     public function getAuthor($id)
     {
-        $response = $this->clientService->sendGetRequest(self::AUTHOR_URI . '/' . $id);
+        $response = $this->clientService->sendGetRequest(self::AUTHOR_URL . '/' . $id);
 
         $authorRaw = json_decode($response->getContent(), true);
 
@@ -97,8 +98,35 @@ class AuthorService
         return $author;
     }
 
+    /**
+     * @param $id
+     * @return bool
+     * @throws TransportExceptionInterface
+     */
     public function deleteAuthor($id)
     {
+        $response = $this->clientService->sendDeleteRequest(self::AUTHOR_URL . '/' . $id);
 
+        if (!empty($response) && $response->getStatusCode() === Response::HTTP_NO_CONTENT) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $authorArray
+     * @return bool
+     * @throws TransportExceptionInterface
+     */
+    public function addAuthorFromArray($authorArray)
+    {
+        $response = $this->clientService->sendPostRequest(self::AUTHOR_URL, $authorArray);
+
+        if (!empty($response) && $response->getStatusCode() === Response::HTTP_OK) {
+            return true;
+        }
+
+        return false;
     }
 }

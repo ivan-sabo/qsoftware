@@ -17,6 +17,7 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class UserService
 {
+    const TOKEN_URL = '/api/token';
     /**
      * @var QSSClientService
      */
@@ -96,5 +97,27 @@ class UserService
         $this->em->flush();
 
         return $user;
+    }
+
+    /**
+     * @param $email
+     * @param $password
+     * @return |null
+     * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function getTokenForUser($email, $password)
+    {
+        $response = $this->qssClientService->getUserData($email, $password);
+
+        if (empty($response)) {
+            return null;
+        }
+
+        $responseArray = json_decode($response->getContent(), true);
+
+        return $responseArray['token_key'];
     }
 }

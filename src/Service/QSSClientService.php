@@ -124,4 +124,64 @@ class QSSClientService
 
         return null;
     }
+
+    /**
+     * @param $url
+     * @param $body
+     * @return ResponseInterface|null
+     * @throws TransportExceptionInterface
+     */
+    public function sendPostRequest($url, $body)
+    {
+        /**
+         * @var User $user
+         */
+        $user = $this->security->getUser();
+
+        $response = $this->httpClient->request(
+            Request::METHOD_POST,
+            $url,
+            [
+                'auth_bearer' => $user->getTokenKey(),
+                'json' => $body,
+            ]
+        );
+
+        if ($response->getStatusCode() == Response::HTTP_OK) {
+            return $response;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param $url
+     * @param $body
+     * @param $token
+     * @return ResponseInterface|null
+     * @throws TransportExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     */
+    public function sentPostRequestWithToken($url, $body, $token)
+    {
+        $response = $this->httpClient->request(
+            Request::METHOD_POST,
+            $url,
+            [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                ],
+                'body' => json_encode($body),
+                'auth_bearer' => $token,
+            ]
+        );
+
+        if ($response->getStatusCode() == Response::HTTP_OK) {
+            return $response;
+        }
+
+        return null;
+    }
 }

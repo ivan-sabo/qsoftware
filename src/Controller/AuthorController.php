@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Service\AuthorService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
@@ -52,10 +53,15 @@ class AuthorController extends AbstractController
     /**
      * @Route("/authors/{id}/delete", name="author_delete")
      *
+     * @param AuthorService $authorService
      * @param $id
+     * @return RedirectResponse
+     * @throws TransportExceptionInterface
      */
-    public function deleteAuthor($id)
+    public function deleteAuthor(AuthorService $authorService, $id)
     {
+        $authorService->deleteAuthor($id);
 
+        return $this->redirectToRoute('authors');
     }
 }

@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Add Book</h1>
+
+    <form method="post">
+        <label>Author: </label>
+        <select name="author">
+            {% for author in authors %}
+                <option value="{{ author.id }}"> {{ author.firstname }} {{ author.lastname }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label>Title: </label> <input name="title" type="text"> <br>
+        <label>Release date: </label> <input name="release_date" type="text"> <br>
+        <label>Updated at: </label> <input name="updated_at" type="text"> <br>
+        <label>Description: </label> <input name="description" type="text"> <br>
+        <label>ISBN: </label> <input name="isbn" type="text"> <br>
+        <label>Format: </label> <input name="format" type="text"> <br>
+        <label>Number of pages: </label> <input name="number_of_pages" type="text"> <br>
+
+        <input type="submit" value="Add book">
+    </form>
+{% endblock %}
