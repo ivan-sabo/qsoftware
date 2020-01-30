@@ -44,6 +44,10 @@ class CreateAuthorCommand extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int|void
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {

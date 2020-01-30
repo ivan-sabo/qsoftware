@@ -7,8 +7,6 @@ namespace App\Service;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
@@ -86,6 +84,7 @@ class UserService
             return $user;
         }
 
+        $user = new User();
         $user->setActive(true);
         $user->setTokenKey($responseArray['token_key']);
         $user->setEmail($responseArray['user']['email']);
